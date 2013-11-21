@@ -21,56 +21,64 @@ int is_left(Points & P,int id_a,int id_b,int id_c)//若结点c在向量ab左边可就返回T
     if(z>0) {
         cout << "1 return z=" << z << endl;
         return 1;
-    }  
+    }
     else if(z<0) {
         cout << "0 return! z=" << z << endl;
         return 0;
     }
-    else{//z==0
-	cout << "2 return z=0" << endl;
-	return 2;
+    else { //z==0
+        cout << "2 return z=0" << endl;
+        return 2;
     }
 }
 
 void hull_bottom(Points & P,int left,int right,int & id_bl,int & id_br)//最底部切线向量为（id_bl,id_br）
 {   //左边hull的最右结点和右边hull最左边结点标识分别为right和left
     //其中id_bl,id_br,left,right都为顶点标识
-//     cout << "enter hull bottom" << endl;
     DListNode* X,*Y,*Z;
     int a,b,c;
-    X=(DListNode*)(P[left].getHead());
-    Y=(DListNode*)(P[right].getHead());
-    Z=(DListNode*)(Y->getPre());//逆时针向下
-    a=X->getData();
-    b=Y->getData();
-    c=Z->getData();
-//     cout << "enter while" << endl;
-    while(is_left(P,a,b,c)==0)//寻找id_br
+    int pre_bl,pre_br;
+    id_bl = left;
+    id_br = right;
+    do
     {
-// 	cout << "into while!" << endl;//Z==Y时不会进入循环
-        Y=Z;
-        Z=(DListNode*)(Z->getPre());
+        pre_bl = id_bl;
+        pre_br = id_br;
+        X=(DListNode*)(P[pre_bl].getHead());
+        Y=(DListNode*)(P[pre_br].getHead());
+        Z=(DListNode*)(Y->getPre());//逆时针向下
+        a=X->getData();
         b=Y->getData();
         c=Z->getData();
-    }
-    id_br=Y->getData();
+//     cout << "enter while" << endl;
+        while(is_left(P,a,b,c)==0)//寻找id_br
+        {
+// 	cout << "into while!" << endl;//Z==Y时不会进入循环
+            Y=Z;
+            Z=(DListNode*)(Z->getPre());
+            b=Y->getData();
+            c=Z->getData();
+        }
+        id_br=Y->getData();
 
-    Z=(DListNode*)(X->getNext());//顺时针向下
-    a=Y->getData();
-    b=X->getData();
-    c=Z->getData();
-//     cout << "enter while 2" << endl;
-//     while(is_left(P,a,b,c)==0)//寻找id_bl--13/11/20修改
-    while(is_left(P,a,b,c)==1)//寻找id_bl
-    {
-//       cout << "into while!" << endl;
-        X=Z;
-        Z=(DListNode*)(Z->getNext());
+
+        Z=(DListNode*)(X->getNext());//顺时针向下
+        a=Y->getData();
         b=X->getData();
         c=Z->getData();
+//     while(is_left(P,a,b,c)==0)//寻找id_bl--13/11/20修改
+        while(is_left(P,a,b,c)==1)//寻找id_bl
+        {
+//       cout << "into while!" << endl;
+            X=Z;
+            Z=(DListNode*)(Z->getNext());
+            b=X->getData();
+            c=Z->getData();
 // 	cout << "b=" << b << " c=" << c << endl;
-    }
-    id_bl=X->getData();//???
+        }
+        id_bl=X->getData();
+        cout << "id_br=" << id_br << " id_bl=" << id_bl << endl;
+    } while(id_bl!=pre_bl||id_br!=pre_br);
 //     cout << "id_br=" << id_br << " id_bl=" << id_bl << endl;
 }
 void hull_top(Points & P,int left,int right,int & id_tl,int & id_tr)//而最顶部切线向量为（id_tl,id_tr）
@@ -78,34 +86,42 @@ void hull_top(Points & P,int left,int right,int & id_tl,int & id_tr)//而最顶部切
     //其中id_tl,id_tr,left,right都为顶点标识
     DListNode* X,*Y,*Z;
     int a,b,c;
-    X=(DListNode*)(P[left].getHead());
-    Y=(DListNode*)(P[right].getHead());
-    Z=(DListNode*)(Y->getNext());//顺时针向上
-    a=X->getData();
-    b=Y->getData();
-    c=Z->getData();
-//     while(is_left(P,a,b,c)==0)//寻找id_tr
-    while(is_left(P,a,b,c)==1)//寻找id_tr--13/11/20修改
+    int pre_tl,pre_tr;
+    id_tl = left;
+    id_tr = right;
+    do 
     {
-        Y=Z;
-        Z=(DListNode*)(Z->getNext());
+        pre_tl = id_tl;
+        pre_tr = id_tr;
+        X=(DListNode*)(P[pre_tl].getHead());
+        Y=(DListNode*)(P[pre_tr].getHead());
+        Z=(DListNode*)(Y->getNext());//顺时针向上
+        a=X->getData();
         b=Y->getData();
         c=Z->getData();
-    }
-    id_tr=Y->getData();
+//     while(is_left(P,a,b,c)==0)//寻找id_tr
+        while(is_left(P,a,b,c)==1)//寻找id_tr--13/11/20修改
+        {
+            Y=Z;
+            Z=(DListNode*)(Z->getNext());
+            b=Y->getData();
+            c=Z->getData();
+        }
+        id_tr=Y->getData();
 
-    Z=(DListNode*)(X->getPre());//逆时针向上
-    a=Y->getData();
-    b=X->getData();
-    c=Z->getData();
-    while(is_left(P,a,b,c)==0)//寻找id_tl
-    {
-        X=Z;
-        Z=(DListNode*)(Z->getPre());
+        Z=(DListNode*)(X->getPre());//逆时针向上
+        a=Y->getData();
         b=X->getData();
         c=Z->getData();
-    }
-    id_tl=X->getData();
-//     cout << "id_tr=" << id_tr << " id_tl=" << id_tl << endl;
+        while(is_left(P,a,b,c)==0)//寻找id_tl
+        {
+            X=Z;
+            Z=(DListNode*)(Z->getPre());
+            b=X->getData();
+            c=Z->getData();
+        }
+        id_tl=X->getData();
+        cout << "id_tr=" << id_tr << " id_tl=" << id_tl << endl;
+    } while(id_tl!=pre_tl || id_tr!=pre_tr);
 }
 #endif
