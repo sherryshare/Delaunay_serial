@@ -40,8 +40,8 @@ void hull_bottom(Points & P,int left,int right,int & id_bl,int & id_br)//×îµ×²¿Ç
     int pre_bl,pre_br;
     id_bl = left;
     id_br = right;
-    do
-    {
+//     do
+//     {
         pre_bl = id_bl;
         pre_br = id_br;
         X=(DListNode*)(P[pre_bl].getHead());
@@ -78,7 +78,7 @@ void hull_bottom(Points & P,int left,int right,int & id_bl,int & id_br)//×îµ×²¿Ç
         }
         id_bl=X->getData();
         cout << "id_br=" << id_br << " id_bl=" << id_bl << endl;
-    } while(id_bl!=pre_bl||id_br!=pre_br);
+//     } while(id_bl!=pre_bl||id_br!=pre_br);
 //     cout << "id_br=" << id_br << " id_bl=" << id_bl << endl;
 }
 void hull_top(Points & P,int left,int right,int & id_tl,int & id_tr)//¶ø×î¶¥²¿ÇĞÏßÏòÁ¿Îª£¨id_tl,id_tr£©
@@ -89,8 +89,8 @@ void hull_top(Points & P,int left,int right,int & id_tl,int & id_tr)//¶ø×î¶¥²¿ÇĞ
     int pre_tl,pre_tr;
     id_tl = left;
     id_tr = right;
-    do 
-    {
+//     do 
+//     {
         pre_tl = id_tl;
         pre_tr = id_tr;
         X=(DListNode*)(P[pre_tl].getHead());
@@ -122,6 +122,6 @@ void hull_top(Points & P,int left,int right,int & id_tl,int & id_tr)//¶ø×î¶¥²¿ÇĞ
         }
         id_tl=X->getData();
         cout << "id_tr=" << id_tr << " id_tl=" << id_tl << endl;
-    } while(id_tl!=pre_tl || id_tr!=pre_tr);
+//     } while(id_tl!=pre_tl || id_tr!=pre_tr);
 }
 #endif

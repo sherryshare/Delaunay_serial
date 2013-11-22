@@ -40,13 +40,17 @@ bool testDelaunayEdge(Points & P,int id_a,int id_b,int id_c,int id_d)//假若结点i
 void merge(Points & P,int left,int right)//将最右边结点标识为right的左边hull和最左边结点标识为left的右边hull合并
 {   //merge合并hull，至少有左边hull结点数大于等于3，而右边hull结点数可为1或2或更多
 //???这里只是合并hull，并未顾及边缘合并生成三角形的问题
+    bool rFlag = false;//判断右边hull是否仅一个节点，是为true
     if(left==-1)//假若没有右hull，则传left=-1进来说明不需要合并了
         return;
     if(P[left].getHead()->getSize() < 3) {
         cout << "The left hull size is less than 3." << endl;
         return;
     }
-    cout << "Right hull size = " << P[right].getHead()->getSize() << endl;
+    if(P[right].getHead()->getSize()==1){
+      cout << "Right hull size = " << P[right].getHead()->getSize() << endl;
+      rFlag = true;
+    }
     int id_bl,id_br,id_tl,id_tr;
 //     cout << "hull_bottom" << endl;
     hull_bottom(P,left,right,id_bl,id_br);//此处僵死，待修改！！！13/10/23！！！
@@ -91,8 +95,8 @@ void merge(Points & P,int left,int right)//将最右边结点标识为right的左边hull和最
         pR=P[R].getHead();
         R1=pR->succ(L);//left在pR的链表中:l->insertNode(id_tr,true,true,0);
 //         cout << "R1=" << R1 << " L=" << L << " PR=" << pR->getData() << endl;
-//         cout << "first if" << endl;
         if(R1!=R)//右边的hull不只有一个节点
+// 	if(!rFlag)//-------13/11/22右边的hull不只有一个节点
         {
 //             cout << "second if" << endl;
 // 	    cout << "is left start " << R1 << endl;
@@ -165,7 +169,11 @@ void merge(Points & P,int left,int right)//将最右边结点标识为right的左边hull和最
             l=P[L].getHead();
             r=P[R].getHead();
             cout << "L=" << L << " R=" << R << " preL=" << preL << " preR=" << preR << endl;
-            if(preL==L)
+//             if(preR==R)//added 13/11/22
+// 	    {
+// 		R=id_br;
+// 	    }
+	    if(preL==L)
             {
                 l->insertNode(R,false,false,preR);
                 r->insertNode(L,false,false,r->succ(R));

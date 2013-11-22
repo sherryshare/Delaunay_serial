@@ -30,6 +30,10 @@ void Delaunay(Points & points,int first,int last)//,int serialSize,bool isPara)
         if(!is_left(points,first,first+1,last)) {
             points[first].getHead()->insertNode(first+1,true,true,0);
             points[first].getHead()->insertNode(last,true,false,0);
+	    points[first].getHead()->printAll();
+	    points[first+1].getHead()->insertNode(last,true,true,0);
+            points[first+1].getHead()->insertNode(first,true,false,0);	    
+	    points[first+1].getHead()->printAll();
             points[last].getHead()->insertNode(first,true,true,0);
             points[last].getHead()->insertNode(first+1,true,false,0);
 	    points[last].getHead()->printAll();
@@ -37,6 +41,10 @@ void Delaunay(Points & points,int first,int last)//,int serialSize,bool isPara)
         else {
             points[first].getHead()->insertNode(last,true,true,0);
             points[first].getHead()->insertNode(first+1,true,false,0);
+	    points[first].getHead()->printAll();
+	    points[first+1].getHead()->insertNode(first,true,true,0);
+            points[first+1].getHead()->insertNode(last,true,false,0);	    
+	    points[first+1].getHead()->printAll();
             points[last].getHead()->insertNode(first+1,true,true,0);
             points[last].getHead()->insertNode(first,true,false,0);
 	    points[last].getHead()->printAll();

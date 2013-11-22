@@ -77,7 +77,8 @@ void displayFunction2()
     glLineWidth( 1.0 );
 
     int count=0;
-    for(int i=0; i < 8; i++)//points.size(); i++)//altered for test
+    for(int i=0; i < 5; i++)//altered for test
+//     for(int i=0; i < points.size(); i++)
     {
         glBegin( GL_LINE_LOOP );
         glColor4f( 0.0, 0.0, 0.0, 0.0 );
@@ -86,11 +87,40 @@ void displayFunction2()
 	    DListNode * pNode = points[i].getHead();
 	    do{
 	      int id = pNode->getData();
-	      if(id < 8)//--added for test
+	      if(id < 5)//--added for test
                 glVertex2f( points[id][0], points[id][1]);//一个点的x、y坐标	
 	      pNode = pNode->getNext();
 	    }while(pNode!=points[i].getHead());
             glVertex2f( points[i][0], points[i][1]);//形成闭包
+        }
+        glEnd();
+    }
+    glutSwapBuffers();
+//     cout << "\nCount = " << count << endl;
+}
+
+void displayFunction3()
+{
+    glClear( GL_COLOR_BUFFER_BIT );
+
+    glLineWidth( 1.0 );
+
+    int count=0;
+//     for(int i=0; i < 8; i++)//altered for test
+    for(int i=0; i < points.size(); i++)
+    {
+        glBegin( GL_LINES );
+        glColor4f( 0.0, 0.0, 0.0, 0.0 );
+        int listSize = 0;
+        if((listSize = points[i].getHead()->getSize()) > 1) {
+	    DListNode * pNode = points[i].getHead();
+	    do{
+	      int id = pNode->getData();
+	      glVertex2f( points[i][0], points[i][1]);
+// 	      if(id < 8)//--added for test
+                glVertex2f( points[id][0], points[id][1]);//一个点的x、y坐标	
+	      pNode = pNode->getNext();
+	    }while(pNode!=points[i].getHead());
         }
         glEnd();
     }
@@ -147,7 +177,7 @@ int main(int argc, char *argv[])
     glutInit( &argc, argv );
     glutInitDisplayMode( GLUT_RGBA | GLUT_DOUBLE );
     glutCreateWindow( "Delaunay" );
-    glutDisplayFunc( displayFunction2 );
+    glutDisplayFunc( displayFunction3 );
 //     glutDisplayFunc( displayFunction );
     glutReshapeFunc( resizeFunction );
     initializeGL();

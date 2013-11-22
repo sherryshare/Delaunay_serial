@@ -1,7 +1,7 @@
 #include<iostream>
 #include<fstream>
 #include<cstdlib>
-#define SIZE 15
+#define SIZE 10
 #define MAX_X 2
 #define MAX_Y 2
 #define MIN_X 1
