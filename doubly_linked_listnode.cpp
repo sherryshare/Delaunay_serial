@@ -4,7 +4,7 @@ DListNode::DListNode(int id):id(id)//结点的id
 }
 
 bool DListNode::delNode(int ID_del)//删除结点ID_del,除非要删除的结点在，否则什么也不做
-//且不准删除管理结点，即this指向的结点??
+//且不准删除管理结点，即this指向的结点
 {
     DListNode * ptr1,* ptr2;
     ptr1=this;
@@ -26,11 +26,11 @@ bool DListNode::delNode(int ID_del)//删除结点ID_del,除非要删除的结点在，否则什么
     return false;
 }
 
-bool DListNode::searchNode(int ID)
+bool DListNode::searchNode(int id)
 {
     DListNode * ptr=this;
     do{
-      if(ptr->getData()==ID)
+      if(ptr->getData()==id)
 	return true;
       ptr = ptr->getNext();
     }while(ptr!=this);
@@ -43,7 +43,11 @@ bool DListNode::insertNode(int ID_insert,bool f1,bool f2,int succ_id)//插入结点I
     DListNode* next=m_ptrNext;
     DListNode* pre=m_ptrPre;                                     //此双向链表从前到后组织按顺时针方向的结点
     DListNode* p;
-    if(searchNode(ID_insert)){
+    if(ID_insert == this->getData()){//如果插入节点为头节点，返回false
+      cout << "Waring: inserting head node: " << this->getData() << endl; 
+      return false;
+    }
+    else if(searchNode(ID_insert)){
 //       cout << "Warning: Node " << ID_insert << " already exit in Point:" << this->getData() << endl;
        //方案一：如果节点存在则不插入。
 //       return false;

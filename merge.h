@@ -22,8 +22,8 @@ bool testDelaunayEdge(Points & P,int id_a,int id_b,int id_c,int id_d)//假若结点i
     cout << "x1="<< x1 << " x2=" << x2 << " x3=" << x3 << " x4=" << x4 << endl;
     cout << "y1="<< y1 << " y2=" << y2 << " y3=" << y3 << " y4=" << y4 << endl;
     if(c == 0.0) {
-        cout << "test true return c=" << c << endl;
-        return true;
+        cout << "test false return c=" << c << endl;//altered 13/11/25 两点组成的圆直径无限大，必在其内
+        return false;
     }
     x=((y2-y1)*(y3*y3-y1*y1+x3*x3-x1*x1)-(y3-y1)*(y2*y2-y1*y1+x2*x2-x1*x1))/c;
     y=((x2-x1)*(x3*x3-x1*x1+y3*y3-y1*y1)-(x3-x1)*(x2*x2-x1*x1+y2*y2-y1*y1))/(-c);
@@ -47,9 +47,9 @@ void merge(Points & P,int left,int right)//将最右边结点标识为right的左边hull和最
         cout << "The left hull size is less than 3." << endl;
         return;
     }
-    if(P[right].getHead()->getSize()==1){
-      cout << "Right hull size = " << P[right].getHead()->getSize() << endl;
-      rFlag = true;
+    if(P[right].getHead()->getSize()==1) {
+        cout << "Right hull size = " << P[right].getHead()->getSize() << endl;
+        rFlag = true;
     }
     int id_bl,id_br,id_tl,id_tr;
 //     cout << "hull_bottom" << endl;
@@ -77,14 +77,18 @@ void merge(Points & P,int left,int right)//将最右边结点标识为right的左边hull和最
     r->printAll();
     int R1,R2,R,L1,L2,L,preL,preR;
     DListNode* pR=NULL,*pL=NULL;
-    R=right;
-    L=left;
+//     R=right;//deleted 13/11/25
+//     L=left;//deleted 13/11/25
+    R=id_br;
+    L=id_bl;
 //     cout << "start while" << endl;
     int count =0;//-----------有死循环，此为附加去掉死循环用，并非真实需要
     while(!(id_bl==id_tl&&id_br==id_tr))
     {
-        if(++count > 3)
+        if(++count > 3) {
+            cout << "Warning: force break!" << endl;
             break;//-----------有死循环，此为附加去掉死循环用，并非真实需要
+        }
         cout << "bl=" << id_bl << " tl=" << id_tl << " br=" << id_br << " tr=" << id_tr << endl;
         fl=false;
         fr=false;
@@ -94,13 +98,11 @@ void merge(Points & P,int left,int right)//将最右边结点标识为right的左边hull和最
         pL=P[L].getHead();
         pR=P[R].getHead();
         R1=pR->succ(L);//left在pR的链表中:l->insertNode(id_tr,true,true,0);
-//         cout << "R1=" << R1 << " L=" << L << " PR=" << pR->getData() << endl;
-        if(R1!=R)//右边的hull不只有一个节点
-// 	if(!rFlag)//-------13/11/22右边的hull不只有一个节点
+        cout << "R1=" << R1 << " L=" << L << " PR=" << pR->getData() << endl;
+        if(R1!=R)//右边的hull不只有一个节点--------??R还是right
         {
-//             cout << "second if" << endl;
-// 	    cout << "is left start " << R1 << endl;
-            if(is_left(P,L,R,R1)==1)
+//             if(is_left(P,L,R,R1)==1)
+            if(is_left(P,L,R,R1)>=1)//13/11/25尝试修改
             {
                 R2=pR->succ(R1);
                 while(R2!=R&&R2!=R1&&!testDelaunayEdge(P,R1,L,R,R2))//R2在R1、L、R组成的外接圆内
@@ -110,6 +112,7 @@ void merge(Points & P,int left,int right)//将最右边结点标识为right的左边hull和最
                     (P[R1].getHead())->delNode(R);//在R1为头节点的链表中删除R
                     R1=R2;//R1始终储存可与L、R组成三角形的节点
                     R2=pR->succ(R1);//储存备选节点
+		    cout << "L=" << L << " R=" << R << " R1=" << R1 << " R2=" << R2 << endl;
                 }
             }
             else
@@ -119,14 +122,13 @@ void merge(Points & P,int left,int right)//将最右边结点标识为right的左边hull和最
             f=true;
 
         L1=pL->pred(R);//right为何在pL的链表中:r->insertNode(id_tl,true,false,0);
-        cout << "L1=" << L1 << " R=" << R << " PL=" << pL->getData() << endl;
-//         cout << "third if" << endl;
-// 	cout << "is left start " << L1 << endl;//陷入死循环
-        if(is_left(P,L,R,L1)==1)
-// 	if(is_left(P,L,R,L1)>=1)//13/11/21尝试修改
+        cout << "L1=" << L1 << " R=" << R << " L=" << pL->getData() << endl;
+//         if(is_left(P,L,R,L1)==1)//=2情况下直接进入else，fl=true一次while循环后R=R1
+        if(is_left(P,L,R,L1)>=1)//13/11/25尝试修改：=2情况下删除节点失败，最终仍退出--经跟踪验证此种方法正确！！！
+// 	但fl=false,L1=pL->pred(L1),即尾节点id,一次while循环后，若testDelaunayEdge(P,L,R,R1,L1)==true，结果仍为R=R1
+	//实验测试结果，两种情况有所不同
         {
             L2=pL->pred(L1);
-//             cout << "while" << endl;
             while(L2!=L&&L2!=L1&&!testDelaunayEdge(P,L,R,L1,L2))
             {
                 //删除(L,L1)
@@ -134,12 +136,11 @@ void merge(Points & P,int left,int right)//将最右边结点标识为right的左边hull和最
                 (P[L1].getHead())->delNode(L);
                 L1=L2;
                 L2=pL->succ(L1);
+		cout << "L=" << L << " R=" << R << " L1=" << L1 << " L2=" << L2 << endl;
             }
-//             cout << "end while" << endl;
         }
         else
             fl=true;
-//         cout << "fourth if" << endl;
         if(fr)
             L=L1;
         else
@@ -152,7 +153,7 @@ void merge(Points & P,int left,int right)//将最右边结点标识为right的左边hull和最
                 {
                     if(testDelaunayEdge(P,L,R,R1,L1))
                         R=R1;
-                    else
+                    else//若不用if(is_left(P,L,R,L1)>=1)则不能正常退出while循环
                         L=L1;
                 }
                 else
@@ -162,26 +163,31 @@ void merge(Points & P,int left,int right)//将最右边结点标识为right的左边hull和最
         id_bl=L;
         id_br=R;
         cout << "id_bl=" << id_bl << " id_br=" << id_br << endl;
-//         cout << "fifth if" << endl;
         //插入边（L，R）
         if(!(id_bl==id_tl&&id_br==id_tr))//边(tl，tb)在前面已插入，所以就不要再插了
         {
             l=P[L].getHead();
             r=P[R].getHead();
             cout << "L=" << L << " R=" << R << " preL=" << preL << " preR=" << preR << endl;
-//             if(preR==R)//added 13/11/22
-// 	    {
-// 		R=id_br;
-// 	    }
-	    if(preL==L)
+            if(preL==L)
             {
                 l->insertNode(R,false,false,preR);
-                r->insertNode(L,false,false,r->succ(R));
+//                 r->insertNode(L,false,false,r->succ(R));//deleted 13/11/25
+                r->insertNode(L,false,false,L1);//added 13/11/25--if(is_left(P,L,R,L1)>=1)L1结果变化影响此处结果
+		//若不用if(is_left(P,L,R,L1)>=1)则此处插入动作失败
+                cout << "perL==L\tl:";
+                l->printAll();
+                cout << "r:";
+                r->printAll();
             }
             else
             {
                 l->insertNode(R,false,false,preL);
                 r->insertNode(L,false,false,R1);
+                cout << "perR==R?\tl:";
+                l->printAll();
+                cout << "r:";
+                r->printAll();
             }
         }
 
